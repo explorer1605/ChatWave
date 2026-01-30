@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Chatbot UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>I ❤️ YouTube</h2>
+            <button id="new-chat-btn">+ New Chat</button>
+        </div>
+        <div id="history-list" class="history-list">
+            </div>
+    </aside>
+
+    <main class="main-content">
+        <section id="landing-view" class="view active">
+            <div class="hero">
+                <h1>Analyze any Video</h1>
+                <div class="input-group">
+                    <input type="text" id="yt-url" placeholder="Paste YouTube URL here...">
+                    <button id="analyze-btn">Start Chat</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="chat-view" class="view">
+            <header class="chat-header">
+                <span id="video-title">Loading video details...</span>
+            </header>
+            <div id="chat-box" class="chat-box"></div>
+            <div class="input-area">
+                <input type="text" id="user-msg" placeholder="Ask about the video...">
+                <button id="send-btn">Send</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
