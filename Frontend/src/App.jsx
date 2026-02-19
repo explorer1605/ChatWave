@@ -5,6 +5,7 @@ import ChatInterface from './components/ChatInterface';
 import RecentChats from './components/RecentChats';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getChats, saveChat, deleteChat as deleteChatFromStorage, getRandomEmoji } from './lib/storage';
+import { processVideo, extractVideoIdFromUrl } from './lib/api';
 
 function App() {
   const [isVideoProcessed, setIsVideoProcessed] = useState(false);
@@ -19,15 +20,16 @@ function App() {
     setRecentChats(getChats());
   };
 
-  const handleProcessVideo = (url) => {
-    // In a real app, you'd fetch video details here
+  const handleProcessVideo = async (url) => {
+    const payload = await processVideo(url);
     const newChat = {
       id: Date.now().toString(),
+      videoId: payload.videoId,
       videoUrl: url,
-      videoTitle: `Video ${url.slice(-11)}`, // Placeholder title
+      videoTitle: payload.videoTitle || `Video ${payload.videoId}`,
       emoji: getRandomEmoji(),
-      messages: [{ id: 1, role: 'ai', content: 'Hello! I\'ve processed the video. What would you like to know?' }],
-      timestamp: Date.now()
+      messages: [{ id: 1, role: 'ai', content: payload.message || 'Video processed successfully.' }],
+      timestamp: Date.now(),
     };
 
     saveChat(newChat);
@@ -37,7 +39,11 @@ function App() {
   };
 
   const handleSelectChat = (chat) => {
-    setCurrentChat(chat);
+    const selected = {
+      ...chat,
+      videoId: chat.videoId || extractVideoIdFromUrl(chat.videoUrl || ''),
+    };
+    setCurrentChat(selected);
     setIsVideoProcessed(true);
   };
 
@@ -94,12 +100,13 @@ function App() {
                 onClick={handleBack}
                 className="mb-4 text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1 transition-colors pl-2"
               >
-                ← Process another video
+                {'<-'} Process another video
               </button>
               <ChatInterface
                 initialMessages={currentChat?.messages}
                 onMessagesChange={handleUpdateChat}
                 chatTitle={currentChat?.videoTitle}
+                videoId={currentChat?.videoId}
               />
             </motion.div>
           )}
