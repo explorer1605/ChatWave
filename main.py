@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
-
+import os
+import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,7 +44,7 @@ video_sessions: Dict[str, Dict[str, object]] = {}
 app = FastAPI(title="YouTube Chatbot API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -163,11 +164,15 @@ def chat_endpoint(payload: ChatRequest):
     return {"answer": answer}
 
 
+# if __name__ == "__main__":
+#     url = input("Enter the YouTube URL: ")
+#     video_id = process_video(url)
+#     while True:
+#         query = input("\nAsk your question (type 'exit' to quit):")
+#         if query.lower() == "exit":
+#             break
+#         print("\nAnswer:", ask_question(video_id, query), "\n")
+
 if __name__ == "__main__":
-    url = input("Enter the YouTube URL: ")
-    video_id = process_video(url)
-    while True:
-        query = input("\nAsk your question (type 'exit' to quit):")
-        if query.lower() == "exit":
-            break
-        print("\nAnswer:", ask_question(video_id, query), "\n")
+    port = int(os.getenv("API_PORT", "8000"))
+    uvicorn.run(app, host="0.0.0.0", port=port)
